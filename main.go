@@ -43,15 +43,18 @@ func main() {
 		fmt.Println(scanner.Text())
 		lineNumber += 1
 		//each line should be of the format  state<tab>capital.  Store the line into variables
-		thisLine := strings.Fields(scanner.Text())
 
-		// have some bug here need to find a way to split based on <TAB> not just whitespace characters, else messed up
-		state := thisLine[0]
-		//Capitals with more than one world (like Salt Lake City) require more than one slice
-		capital := thisLine[1:]
+		// This code works. Use the strings package Split function to split on the tab <\t>
+		thisLine := strings.Split(scanner.Text(), "\t")
+		fmt.Printf("The capital of %s is %s.\n", thisLine[0], thisLine[1])
+		/*
+			// This should work but doesn't..need to study up on how regular expressions work in go
+			// This should match on anything execpt TAB followed by TAB and then anything byt TAB
+			splitStateandCap := regexp.MustCompile(`[^\t]*\t[^\t]*`)
+			//print another line using our variable names
+			fmt.Printf("The capital of %s is %s\n", splitStateandCap.Split(scanner.Text(), -1))
 
-		//print another line using our variable names
-		fmt.Printf("\nThe capital of %s is %s\n", state, capital)
+		*/
 
 	}
 

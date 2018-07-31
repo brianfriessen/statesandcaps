@@ -50,7 +50,16 @@ func main() {
 		/*
 			// This should work but doesn't..need to study up on how regular expressions work in go
 			// This should match on anything execpt TAB followed by TAB and then anything byt TAB
-			splitStateandCap := regexp.MustCompile(`[^\t]*\t[^\t]*`)
+			//splitStateandCap := regexp.MustCompile(`[^\t]*\t[^\t]*`)
+
+			// Above didn't work because Split works based on a single Character
+			//Verified the below will work OK
+				// re := regexp.MustCompile("\t")
+				//result := re.Split(scanner.Txt(), 2)
+				// State is in result[0] and capital in result[1]
+				//fmt.Println(result[0])
+				//fmt.Println(result[1])
+
 			//print another line using our variable names
 			fmt.Printf("The capital of %s is %s\n", splitStateandCap.Split(scanner.Text(), -1))
 

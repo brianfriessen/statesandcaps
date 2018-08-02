@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-		"log"
+	"log"
 	"os"
 	"strings"
 )
@@ -19,52 +19,68 @@ func check(e error) {
 }
 
 func main() {
-	// read the entire contents of the
-	//dat, err := ioutil.ReadFile("states.txt")
-	//check(err)
-	//fmt.Print(string(dat))
-	//fmt.Println("finished printing entire contents of file")
 
-	// now lets read one line at a time from the file
 
-	//fmt.Println("Now printing each line, one at a time.")
+	// Initial setup of the program which consists of initializing a file object and console object along with some variable initiization
 
+	//Open the master file which has the state and capitals  (make this an array later stored with the program rather than a file)
 	// os.open returns two values, a file handle and an error
 	file, err := os.Open("states.txt")
-	check(err)
+	defer file.Close()   // defer means wait until the end of time and then close the file
+	check(err)  // make sure the file exists and we were able to open it
+
+	//Handle to the terminal console so we can get input from the user
+	reader := bufio.NewReader(os.Stdin)
 
 	//Handle to read a text file
 	scanner := bufio.NewScanner(file)
 
-	//Handle so we can get input from the user
-	reader := bufio.NewReader(os.Stdin)
 
+	var lineNumber = 1  //  Counter to keep track of how many states we have tested
+	var numberCorrect  =0  // Counter to keep track of number of correct answers
+	var numberWrong = 0  // Counter to keep track of the number of wrong answers
+
+	// Print a banner one time at the start of the program
+	fmt.Println("Welcome to states and capitals.  Type EXIT to quit")
+
+	// now lets read one line at a time from the file
 	//scanner.Scan will read one line from the file in each iteration until it reaches the end of the file.
-	var lineNumber = 1
 	for scanner.Scan() {
 		fmt.Printf("Q %d/50: ", lineNumber)
-		//fmt.Println(scanner.Text())
 		lineNumber += 1
-		//each line should be of the format  state<tab>capital.  Store the line into variables
 
+		//each line should be of the format  state<tab>capital.  Store the line into variables
 		// This code works. Use the strings package Split function to split on the tab <\t>
 		thisLine := strings.Split(scanner.Text(), "\t")
-		//fmt.Printf("The capital of %s is %s.\n", thisLine[0], thisLine[1])
+		//for debug:  fmt.Printf("The capital of %s is %s.\n", thisLine[0], thisLine[1])
 
+		//thisLine is a slice with first element being the state and second the capital..count from 0
 		state := thisLine[0]
 		capital := thisLine[1]
 
 		//Prompt the user for his answer
+		fmt.Printf("Correct: %2d, Incorrect %2d\n", numberCorrect, numberWrong)
 		fmt.Printf("What is the Capital of %s? ", state)
+
+		//Read user input up until enter (Carriage Return/Line Feed  aka CR/LF ) is entered
 		text, _ := reader.ReadString('\n')
 
 		//Strip out the carriage return and line feed from the user response so we just have the state name
 		text = strings.Replace(text, "\n", "", -1)
 
-		fmt.Printf("You said: %s, the answer is %s\n", text, capital)
-		if strings.Compare(text, capital) == 0 {
-			fmt.Println("Correct!")
+		//Check to see if we got EXIT or exit to quit
+		if strings.Compare(text,"EXIT") == 1 || strings.Compare(text, "exit") == 1 {
+			os.Exit(1)
 		}
+
+
+		fmt.Printf("----> You said: %s, the answer is %s\n", text, capital)
+		if strings.Compare(text, capital) == 0 {
+			numberCorrect++
+			fmt.Println("Correct!")
+		} else { numberWrong++
+		fmt.Println("Sorry, that is not correct")}
+
 		/*
 			This should work but doesn't..need to study up on how regular expressions work in go
 			This should match on anything except TAB followed by TAB and then anything byt TAB
@@ -88,7 +104,5 @@ func main() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-
-	defer file.Close()
 
 }
